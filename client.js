@@ -3,10 +3,13 @@ const socket = io();
 let roomCode = '';
 let userName = '';
 
+// ---------------------------
+// CREATE ROOM
 document.getElementById('createBtn').onclick = () => {
   const name = document.getElementById('name').value.trim();
   if (!name) return alert('Enter your name');
   userName = name;
+
   socket.emit('createRoom', name, (code) => {
     roomCode = code;
     showChat(code);
@@ -14,11 +17,14 @@ document.getElementById('createBtn').onclick = () => {
   });
 };
 
+// ---------------------------
+// JOIN ROOM
 document.getElementById('joinBtn').onclick = () => {
   const name = document.getElementById('name').value.trim();
   const code = document.getElementById('code').value.trim();
   if (!name || !code) return alert('Enter name and code');
   userName = name;
+
   socket.emit('joinRoom', { code, name }, (res) => {
     if (res.success) {
       roomCode = code;
@@ -27,31 +33,35 @@ document.getElementById('joinBtn').onclick = () => {
   });
 };
 
+// ---------------------------
+// SEND MESSAGE
 document.getElementById('sendBtn').onclick = () => {
   const msg = document.getElementById('message').value.trim();
   if (!msg) return;
+
   socket.emit('sendMessage', { code: roomCode, name: userName, message: msg });
   document.getElementById('message').value = '';
 };
 
-// Press Enter to send
+// ENTER KEY SUPPORT
 document.getElementById('message').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     document.getElementById('sendBtn').click();
   }
 });
 
-// Load past messages
+// ---------------------------
+// LOAD PAST MESSAGES
 socket.on('loadMessages', (messages) => {
   const chat = document.getElementById('chat');
   chat.innerHTML = '';
   messages.forEach((msg) => addMessageToScreen(msg));
 });
 
-// New incoming messages
+// NEW MESSAGE
 socket.on('newMessage', (msg) => addMessageToScreen(msg));
 
-// System messages
+// SYSTEM MESSAGE
 socket.on('systemMessage', (text) => {
   const chat = document.getElementById('chat');
 
@@ -64,7 +74,7 @@ socket.on('systemMessage', (text) => {
 });
 
 // ---------------------------
-// Function to add messages to the screen safely
+// FUNCTION TO ADD MESSAGES TO SCREEN
 function addMessageToScreen(msg) {
   const chat = document.getElementById('chat');
 
@@ -82,8 +92,10 @@ function addMessageToScreen(msg) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// Show chat UI
+// ---------------------------
+// SHOW CHAT SCREEN
 function showChat(code) {
-  document.getElementById('chatUI').style.display = 'block';
+  document.getElementById('joinScreen').style.display = 'none';  // hide join/create inputs
+  document.getElementById('chatScreen').style.display = 'block'; // show chat UI
   document.getElementById('roomCodeDisplay').innerText = code;
 }

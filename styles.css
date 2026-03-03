@@ -1,101 +1,132 @@
-const socket = io();
-
-let roomCode = '';
-let userName = '';
-
-// ---------------------------
-// CREATE ROOM
-document.getElementById('createBtn').onclick = () => {
-  const name = document.getElementById('name').value.trim();
-  if (!name) return alert('Enter your name');
-  userName = name;
-
-  socket.emit('createRoom', name, (code) => {
-    roomCode = code;
-    showChat(code);
-    document.getElementById('info').innerText = 'Room created: ' + code;
-  });
-};
-
-// ---------------------------
-// JOIN ROOM
-document.getElementById('joinBtn').onclick = () => {
-  const name = document.getElementById('name').value.trim();
-  const code = document.getElementById('code').value.trim();
-  if (!name || !code) return alert('Enter name and code');
-  userName = name;
-
-  socket.emit('joinRoom', { code, name }, (res) => {
-    if (res.success) {
-      roomCode = code;
-      showChat(code);
-    } else alert(res.message);
-  });
-};
-
-// ---------------------------
-// SEND MESSAGE
-document.getElementById('sendBtn').onclick = () => {
-  const msg = document.getElementById('message').value.trim();
-  if (!msg) return;
-
-  socket.emit('sendMessage', { code: roomCode, name: userName, message: msg });
-  document.getElementById('message').value = '';
-};
-
-// ENTER KEY SUPPORT
-document.getElementById('message').addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    document.getElementById('sendBtn').click();
-  }
-});
-
-// ---------------------------
-// LOAD PAST MESSAGES
-socket.on('loadMessages', (messages) => {
-  const chat = document.getElementById('chat');
-  chat.innerHTML = '';
-  messages.forEach((msg) => addMessageToScreen(msg));
-});
-
-// NEW MESSAGE
-socket.on('newMessage', (msg) => addMessageToScreen(msg));
-
-// SYSTEM MESSAGE
-socket.on('systemMessage', (text) => {
-  const chat = document.getElementById('chat');
-
-  const msgDiv = document.createElement('div');
-  msgDiv.classList.add('system-message'); // uses your CSS
-  msgDiv.textContent = text;
-
-  chat.appendChild(msgDiv);
-  chat.scrollTop = chat.scrollHeight;
-});
-
-// ---------------------------
-// FUNCTION TO ADD MESSAGES TO SCREEN
-function addMessageToScreen(msg) {
-  const chat = document.getElementById('chat');
-
-  const msgDiv = document.createElement('div');
-  msgDiv.classList.add('message'); // uses your CSS
-  msgDiv.textContent = `${msg.name} [${msg.time}]: ${msg.message}`;
-
-  chat.appendChild(msgDiv);
-
-  // Keep only last 50 messages
-  while (chat.children.length > 50) {
-    chat.removeChild(chat.firstChild);
-  }
-
-  chat.scrollTop = chat.scrollHeight;
+/* =========================
+   🎨 EASY CUSTOMIZATION
+========================= */
+:root {
+  --bg-color: #0f172a;        /* Page background */
+  --panel-color: #1e293b;     /* Chat panel / inputs */
+  --accent-color: #6366f1;    /* Buttons & message bubbles */
+  --accent-hover: #4f46e5;    /* Button hover */
+  --text-color: #f1f5f9;      /* Main text */
+  --muted-text: #94a3b8;      /* System messages */
+  --border-color: #334155;    /* Borders */
 }
 
-// ---------------------------
-// SHOW CHAT SCREEN
-function showChat(code) {
-  document.getElementById('joinScreen').style.display = 'none';  // hide join/create inputs
-  document.getElementById('chatScreen').style.display = 'block'; // show chat UI
-  document.getElementById('roomCodeDisplay').innerText = code;
+/* =========================
+   🌍 Base Layout
+========================= */
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+h2 {
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+/* =========================
+   🧾 Inputs & Buttons
+========================= */
+input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--panel-color);
+  color: var(--text-color);
+  width: 250px;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+input:focus {
+  border-color: var(--accent-color);
+}
+
+button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+  margin: 5px 4px;
+}
+
+button:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* =========================
+   💬 Chat UI
+========================= */
+#chatUI {
+  margin-top: 30px;
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--panel-color);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+#chat {
+  border: 1px solid var(--border-color);
+  height: 400px;
+  overflow-y: auto;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  background-color: #0b1220;
+}
+
+/* Individual messages */
+.message {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background-color: var(--accent-color);
+  display: inline-block;
+  max-width: 75%;
+  word-wrap: break-word;
+  color: white;
+}
+
+/* System messages */
+.system-message {
+  background-color: transparent;
+  color: var(--muted-text);
+  font-style: italic;
+}
+
+/* =========================
+   🔗 Links
+========================= */
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   📱 Responsive
+========================= */
+@media (max-width: 600px) {
+  input {
+    width: 90%;
+  }
+
+  #chatUI {
+    padding: 15px;
+  }
 }
