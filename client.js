@@ -46,6 +46,7 @@ document.getElementById('sendBtn').onclick = () => {
 // ENTER KEY SUPPORT
 document.getElementById('message').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
+    e.preventDefault(); // prevent newline
     document.getElementById('sendBtn').click();
   }
 });
@@ -96,6 +97,6 @@ function addMessageToScreen(msg) {
 // SHOW CHAT SCREEN
 function showChat(code) {
   document.getElementById('joinScreen').style.display = 'none';  // hide join/create inputs
-  document.getElementById('chatScreen').style.display = 'block'; // show chat UI
+  document.getElementById('chatScreen').style.display = 'flex';  // show chat UI
   document.getElementById('roomCodeDisplay').innerText = code;
 }

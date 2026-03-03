@@ -14,76 +14,61 @@
 /* =========================
    🌍 Base Layout
 ========================= */
-body {
+body, html {
   margin: 0;
+  padding: 0;
+  height: 100%;
   font-family: Arial, Helvetica, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
+}
+
+/* ------------------------- 
+   Screens 
+------------------------- */
+#joinScreen {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
+  justify-content: center;
+  height: 100vh;
 }
 
-h2 {
-  margin-bottom: 20px;
-  letter-spacing: 2px;
-}
-
-/* =========================
-   🧾 Inputs & Buttons
-========================= */
-input {
+#chatScreen {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  background-color: var(--panel-color);
-  color: var(--text-color);
-  width: 250px;
-  outline: none;
-  transition: 0.2s ease;
 }
 
-input:focus {
-  border-color: var(--accent-color);
-}
-
-button {
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  background-color: var(--accent-color);
-  color: white;
-  cursor: pointer;
-  transition: 0.2s ease;
-  margin: 5px 4px;
-}
-
-button:hover {
-  background-color: var(--accent-hover);
-  transform: translateY(-1px);
-}
-
-/* =========================
-   💬 Chat UI
-========================= */
+/* -------------------------
+   Chat UI
+------------------------- */
 #chatUI {
-  margin-top: 30px;
-  width: 100%;
-  max-width: 600px;
+  flex: 1;
+  width: 90%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
   background-color: var(--panel-color);
-  padding: 20px;
   border-radius: 16px;
   box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  overflow: hidden;
 }
 
+/* Messages area fills remaining space */
 #chat {
-  border: 1px solid var(--border-color);
-  height: 400px;
-  overflow-y: auto;
+  flex: 1;
   padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 10px;
+  border-bottom: 1px solid var(--border-color);
+  overflow-y: auto;
   background-color: #0b1220;
 }
 
@@ -106,9 +91,58 @@ button:hover {
   font-style: italic;
 }
 
-/* =========================
-   🔗 Links
-========================= */
+/* Input + send button */
+input#message {
+  flex: none;
+  width: calc(100% - 20px);
+  margin: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--panel-color);
+  color: var(--text-color);
+  outline: none;
+  transition: 0.2s ease;
+}
+
+input#message:focus {
+  border-color: var(--accent-color);
+}
+
+button#sendBtn {
+  flex: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+  margin-bottom: 10px;
+}
+
+button#sendBtn:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* Buttons & inputs for join screen */
+input, button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--panel-color);
+  color: var(--text-color);
+  margin: 5px 0;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Links */
 a {
   color: var(--accent-color);
   text-decoration: none;
@@ -118,15 +152,17 @@ a:hover {
   text-decoration: underline;
 }
 
-/* =========================
-   📱 Responsive
-========================= */
+/* Responsive */
 @media (max-width: 600px) {
-  input {
-    width: 90%;
+  #chatUI {
+    width: 95%;
   }
 
-  #chatUI {
-    padding: 15px;
+  input#message {
+    width: calc(100% - 20px);
+  }
+
+  input, button {
+    width: 90%;
   }
 }
