@@ -67,29 +67,29 @@ socket.on('systemMessage', (text) => {
   const chat = document.getElementById('chat');
   const sysDiv = document.createElement('div');
   sysDiv.classList.add('system-message');
-  sysDiv.textContent = text;
+  sysDiv.textContent = text.trim();
   chat.appendChild(sysDiv);
   chat.scrollTop = chat.scrollHeight;
 });
 
 // ---------------------------
-// FUNCTION TO ADD MESSAGES TO SCREEN
+// ADD MESSAGE TO SCREEN
 function addMessageToScreen(msg) {
   const chat = document.getElementById('chat');
 
-  // Create a div for the message
+  // Create message container
   const msgDiv = document.createElement('div');
-
-  // Add classes
   msgDiv.classList.add('message');
+
   if (msg.name === userName) {
-    msgDiv.classList.add('self'); // aligns your messages right
+    msgDiv.classList.add('self');
   }
 
-  // Set text content (prevents extra spaces)
-  msgDiv.textContent = `${msg.name} [${msg.time}]: ${msg.message}`;
+  // Use a span and trim to avoid trailing spaces
+  const textSpan = document.createElement('span');
+  textSpan.textContent = `${msg.name} [${msg.time}]: ${msg.message.trim()}`;
+  msgDiv.appendChild(textSpan);
 
-  // Append to chat
   chat.appendChild(msgDiv);
 
   // Keep only last 50 messages
@@ -97,7 +97,6 @@ function addMessageToScreen(msg) {
     chat.removeChild(chat.firstChild);
   }
 
-  // Scroll to bottom
   chat.scrollTop = chat.scrollHeight;
 }
 
