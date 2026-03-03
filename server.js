@@ -46,7 +46,10 @@ io.on("connection", (socket) => {
     const room = rooms[code];
     if (!room) return;
 
-    const msg = { name, message, time: new Date().toLocaleTimeString() };
+    // Only hours and minutes for timestamp
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const msg = { name, message, time };
     room.messages.push(msg); // unlimited messages
     io.to(code).emit("newMessage", msg);
   });
