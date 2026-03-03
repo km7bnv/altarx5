@@ -7,7 +7,7 @@ let userName = '';
 // CREATE ROOM
 document.getElementById('createBtn').onclick = () => {
   const name = document.getElementById('name').value.trim();
-  if (!name) return alert('Enter your name');
+  if (!name) return alert("Please enter your name before creating a room.");
   userName = name;
 
   socket.emit('createRoom', name, (code) => {
@@ -22,14 +22,23 @@ document.getElementById('createBtn').onclick = () => {
 document.getElementById('joinBtn').onclick = () => {
   const name = document.getElementById('name').value.trim();
   const code = document.getElementById('code').value.trim();
-  if (!name || !code) return alert('Enter name and code');
+
+  if (!name) return alert("Please enter your name to join a room.");
+  if (!code) return alert("Please enter a room code.");
+
   userName = name;
 
   socket.emit('joinRoom', { code, name }, (res) => {
     if (res.success) {
       roomCode = code;
       showChat(code);
-    } else alert(res.message);
+    } else if (res.message === "Church full") {
+      alert("This church already has 3 people. You cannot join.");
+    } else if (res.message === "Church not found!") {
+      alert("Room not found! Check the code and try again.");
+    } else {
+      alert(res.message);
+    }
   });
 };
 
@@ -38,11 +47,11 @@ document.getElementById('joinBtn').onclick = () => {
 document.getElementById('sendBtn').onclick = () => {
   const msg = document.getElementById('message').value.trim();
   if (!msg) return;
-
   socket.emit('sendMessage', { code: roomCode, name: userName, message: msg });
   document.getElementById('message').value = '';
 };
 
+// ---------------------------
 // ENTER KEY SUPPORT
 document.getElementById('message').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
@@ -56,12 +65,14 @@ document.getElementById('message').addEventListener('keypress', (e) => {
 socket.on('loadMessages', (messages) => {
   const chat = document.getElementById('chat');
   chat.innerHTML = '';
-  messages.forEach((msg) => addMessageToScreen(msg));
+  messages.forEach(msg => addMessageToScreen(msg));
 });
 
+// ---------------------------
 // NEW MESSAGE
 socket.on('newMessage', (msg) => addMessageToScreen(msg));
 
+// ---------------------------
 // SYSTEM MESSAGE
 socket.on('systemMessage', (text) => {
   const chat = document.getElementById('chat');
@@ -77,15 +88,10 @@ socket.on('systemMessage', (text) => {
 function addMessageToScreen(msg) {
   const chat = document.getElementById('chat');
 
-  // Create message container
   const msgDiv = document.createElement('div');
   msgDiv.classList.add('message');
+  if (msg.name === userName) msgDiv.classList.add('self');
 
-  if (msg.name === userName) {
-    msgDiv.classList.add('self');
-  }
-
-  // Use a span and trim to avoid trailing spaces
   const textSpan = document.createElement('span');
   textSpan.textContent = `${msg.name} [${msg.time}]: ${msg.message.trim()}`;
   msgDiv.appendChild(textSpan);
@@ -93,9 +99,7 @@ function addMessageToScreen(msg) {
   chat.appendChild(msgDiv);
 
   // Keep only last 50 messages
-  while (chat.children.length > 50) {
-    chat.removeChild(chat.firstChild);
-  }
+  while (chat.children.length > 50) chat.removeChild(chat.firstChild);
 
   chat.scrollTop = chat.scrollHeight;
 }

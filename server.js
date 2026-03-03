@@ -18,30 +18,37 @@ function generateRoomCode() {
 io.on("connection", (socket) => {
   let currentRoom = null;
 
+  // CREATE ROOM
   socket.on("createRoom", (name, callback) => {
     const code = generateRoomCode();
-    rooms[code] = { users: [{ id: socket.id, name }], messages: [] };
+    rooms[code] = { users: [{ id: socket.id, name }], messages: [] }; // creator counts as 1
     socket.join(code);
     currentRoom = code;
     callback(code);
   });
 
+  // JOIN ROOM
   socket.on("joinRoom", ({ code, name }, callback) => {
     const room = rooms[code];
     if (!room) return callback({ success: false, message: "Church not found!" });
-    if (room.users.length >= 2) return callback({ success: false, message: "Church full" });
+
+    // Limit total users to 3 (including creator)
+    if (room.users.length >= 3) return callback({ success: false, message: "Church full" });
 
     room.users.push({ id: socket.id, name });
     socket.join(code);
     currentRoom = code;
     callback({ success: true });
 
+    // Send last 50 messages to new user
     const last50 = room.messages.slice(-50);
     socket.emit("loadMessages", last50);
 
+    // Notify room
     io.to(code).emit("systemMessage", `${name} joined church ${code}`);
   });
 
+  // SEND MESSAGE
   socket.on("sendMessage", ({ code, name, message }) => {
     const room = rooms[code];
     if (!room) return;
@@ -54,6 +61,7 @@ io.on("connection", (socket) => {
     io.to(code).emit("newMessage", msg);
   });
 
+  // DISCONNECT
   socket.on("disconnecting", () => {
     if (currentRoom && rooms[currentRoom]) {
       rooms[currentRoom].users = rooms[currentRoom].users.filter(u => u.id !== socket.id);
