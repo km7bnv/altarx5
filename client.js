@@ -34,28 +34,55 @@ document.getElementById('sendBtn').onclick = () => {
   document.getElementById('message').value = '';
 };
 
+// Press Enter to send
+document.getElementById('message').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    document.getElementById('sendBtn').click();
+  }
+});
+
+// Load past messages
 socket.on('loadMessages', (messages) => {
   const chat = document.getElementById('chat');
   chat.innerHTML = '';
   messages.forEach((msg) => addMessageToScreen(msg));
 });
 
+// New incoming messages
 socket.on('newMessage', (msg) => addMessageToScreen(msg));
 
+// System messages
 socket.on('systemMessage', (text) => {
   const chat = document.getElementById('chat');
-  chat.innerHTML += `<i>${text}</i><br>`;
+
+  const msgDiv = document.createElement('div');
+  msgDiv.classList.add('system-message'); // uses your CSS
+  msgDiv.textContent = text;
+
+  chat.appendChild(msgDiv);
   chat.scrollTop = chat.scrollHeight;
 });
 
+// ---------------------------
+// Function to add messages to the screen safely
 function addMessageToScreen(msg) {
   const chat = document.getElementById('chat');
-  chat.innerHTML += `<b>${msg.name}</b> [${msg.time}]: ${msg.message}<br>`;
-  const lines = chat.innerHTML.split('<br>');
-  if (lines.length > 50) chat.innerHTML = lines.slice(-50).join('<br>');
+
+  const msgDiv = document.createElement('div');
+  msgDiv.classList.add('message'); // uses your CSS
+  msgDiv.textContent = `${msg.name} [${msg.time}]: ${msg.message}`;
+
+  chat.appendChild(msgDiv);
+
+  // Keep only last 50 messages
+  while (chat.children.length > 50) {
+    chat.removeChild(chat.firstChild);
+  }
+
   chat.scrollTop = chat.scrollHeight;
 }
 
+// Show chat UI
 function showChat(code) {
   document.getElementById('chatUI').style.display = 'block';
   document.getElementById('roomCodeDisplay').innerText = code;
