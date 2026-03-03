@@ -67,7 +67,7 @@ socket.on('systemMessage', (text) => {
   const chat = document.getElementById('chat');
 
   const msgDiv = document.createElement('div');
-  msgDiv.classList.add('system-message'); // uses your CSS
+  msgDiv.classList.add('system-message');
   msgDiv.textContent = text;
 
   chat.appendChild(msgDiv);
@@ -80,9 +80,14 @@ function addMessageToScreen(msg) {
   const chat = document.getElementById('chat');
 
   const msgDiv = document.createElement('div');
-  msgDiv.classList.add('message'); // uses your CSS
-  msgDiv.textContent = `${msg.name} [${msg.time}]: ${msg.message}`;
+  msgDiv.classList.add('message');
 
+  // Align your messages to right
+  if (msg.name === userName) {
+    msgDiv.classList.add('self');
+  }
+
+  msgDiv.textContent = `${msg.name} [${msg.time}]: ${msg.message}`;
   chat.appendChild(msgDiv);
 
   // Keep only last 50 messages
@@ -96,7 +101,7 @@ function addMessageToScreen(msg) {
 // ---------------------------
 // SHOW CHAT SCREEN
 function showChat(code) {
-  document.getElementById('joinScreen').style.display = 'none';  // hide join/create inputs
-  document.getElementById('chatScreen').style.display = 'flex';  // show chat UI
+  document.getElementById('joinScreen').style.display = 'none';
+  document.getElementById('chatScreen').style.display = 'flex';
   document.getElementById('roomCodeDisplay').innerText = code;
 }

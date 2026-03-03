@@ -23,7 +23,7 @@ body, html {
   color: var(--text-color);
 }
 
-/* ------------------------- 
+/* -------------------------
    Screens 
 ------------------------- */
 #joinScreen {
@@ -61,27 +61,46 @@ body, html {
   border-radius: 16px;
   box-shadow: 0 0 20px rgba(0,0,0,0.4);
   overflow: hidden;
+  padding: 10px;
 }
 
 /* Messages area fills remaining space */
 #chat {
   flex: 1;
-  padding: 15px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 10px;
   overflow-y: auto;
-  background-color: #0b1220;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Individual messages */
+/* -------------------------
+   Messages (Lego-style)
+------------------------- */
 .message {
-  margin-bottom: 10px;
-  padding: 8px 12px;
-  border-radius: 12px;
+  margin-bottom: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
   background-color: var(--accent-color);
   display: inline-block;
-  max-width: 75%;
+  max-width: 70%;
   word-wrap: break-word;
   color: white;
+  position: relative;
+  box-shadow: 2px 2px 0px #0008; /* subtle 3D effect */
+}
+
+/* Staggered stacking effect */
+#chat .message:nth-child(even):not(.self) {
+  margin-left: 20px; /* staggered like Lego bricks */
+}
+
+/* Your messages align right */
+.message.self {
+  background-color: #22c55e; /* green-ish */
+  align-self: flex-end;
+  margin-left: auto;
+  margin-right: 0;
+  box-shadow: 2px 2px 0px #0008;
 }
 
 /* System messages */
@@ -89,9 +108,13 @@ body, html {
   background-color: transparent;
   color: var(--muted-text);
   font-style: italic;
+  text-align: center;
+  margin: 5px 0;
 }
 
-/* Input + send button */
+/* -------------------------
+   Input + Send Button
+------------------------- */
 input#message {
   flex: none;
   width: calc(100% - 20px);
@@ -152,7 +175,9 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Responsive */
+/* -------------------------
+   Responsive
+------------------------- */
 @media (max-width: 600px) {
   #chatUI {
     width: 95%;
