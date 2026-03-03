@@ -46,7 +46,7 @@ document.getElementById('sendBtn').onclick = () => {
 // ENTER KEY SUPPORT
 document.getElementById('message').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
-    e.preventDefault(); // prevent newline
+    e.preventDefault();
     document.getElementById('sendBtn').click();
   }
 });
@@ -65,12 +65,10 @@ socket.on('newMessage', (msg) => addMessageToScreen(msg));
 // SYSTEM MESSAGE
 socket.on('systemMessage', (text) => {
   const chat = document.getElementById('chat');
-
-  const msgDiv = document.createElement('div');
-  msgDiv.classList.add('system-message');
-  msgDiv.textContent = text;
-
-  chat.appendChild(msgDiv);
+  const sysDiv = document.createElement('div');
+  sysDiv.classList.add('system-message');
+  sysDiv.textContent = text;
+  chat.appendChild(sysDiv);
   chat.scrollTop = chat.scrollHeight;
 });
 
@@ -79,15 +77,19 @@ socket.on('systemMessage', (text) => {
 function addMessageToScreen(msg) {
   const chat = document.getElementById('chat');
 
+  // Create a div for the message
   const msgDiv = document.createElement('div');
-  msgDiv.classList.add('message');
 
-  // Align your messages to right
+  // Add classes
+  msgDiv.classList.add('message');
   if (msg.name === userName) {
-    msgDiv.classList.add('self');
+    msgDiv.classList.add('self'); // aligns your messages right
   }
 
+  // Set text content (prevents extra spaces)
   msgDiv.textContent = `${msg.name} [${msg.time}]: ${msg.message}`;
+
+  // Append to chat
   chat.appendChild(msgDiv);
 
   // Keep only last 50 messages
@@ -95,6 +97,7 @@ function addMessageToScreen(msg) {
     chat.removeChild(chat.firstChild);
   }
 
+  // Scroll to bottom
   chat.scrollTop = chat.scrollHeight;
 }
 
