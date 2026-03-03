@@ -28,8 +28,8 @@ io.on("connection", (socket) => {
 
   socket.on("joinRoom", ({ code, name }, callback) => {
     const room = rooms[code];
-    if (!room) return callback({ success: false, message: "Room not found" });
-    if (room.users.length >= 2) return callback({ success: false, message: "Room full" });
+    if (!room) return callback({ success: false, message: "Church not found" });
+    if (room.users.length >= 2) return callback({ success: false, message: "Church full" });
 
     room.users.push({ id: socket.id, name });
     socket.join(code);
@@ -39,7 +39,7 @@ io.on("connection", (socket) => {
     const last50 = room.messages.slice(-50);
     socket.emit("loadMessages", last50);
 
-    io.to(code).emit("systemMessage", `${name} joined the chat`);
+    io.to(code).emit("systemMessage", `${name} joined the church`);
   });
 
   socket.on("sendMessage", ({ code, name, message }) => {
