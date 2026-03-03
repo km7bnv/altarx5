@@ -28,7 +28,7 @@ io.on("connection", (socket) => {
 
   socket.on("joinRoom", ({ code, name }, callback) => {
     const room = rooms[code];
-    if (!room) return callback({ success: false, message: "Church not found" });
+    if (!room) return callback({ success: false, message: "Church not found!" });
     if (room.users.length >= 2) return callback({ success: false, message: "Church full" });
 
     room.users.push({ id: socket.id, name });
@@ -39,16 +39,11 @@ io.on("connection", (socket) => {
     const last50 = room.messages.slice(-50);
     socket.emit("loadMessages", last50);
 
-    io.to(code).emit("systemMessage", `${name} joined the church`);
+    io.to(code).emit("systemMessage", `${name} joined church ${code}`);
   });
 
   socket.on("sendMessage", ({ code, name, message }) => {
     const room = rooms[code];
-    if (!room) return;
-
-    const msg = { name, message, time: new Date().toLocaleTimeString() };
-    room.messages.push(msg); // unlimited messages
-    io.to(code).emit("newMessage", msg);
   });
 
   socket.on("disconnecting", () => {
