@@ -44,6 +44,11 @@ io.on("connection", (socket) => {
 
   socket.on("sendMessage", ({ code, name, message }) => {
     const room = rooms[code];
+    if (!room) return;
+
+    const msg = { name, message, time: new Date().toLocaleTimeString() };
+    room.messages.push(msg); // unlimited messages
+    io.to(code).emit("newMessage", msg);
   });
 
   socket.on("disconnecting", () => {
