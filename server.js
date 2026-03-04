@@ -30,10 +30,10 @@ io.on("connection", (socket) => {
   // JOIN ROOM
   socket.on("joinRoom", ({ code, name }, callback) => {
     const room = rooms[code];
-    if (!room) return callback({ success: false, message: "Church not found!" });
+    if (!room) return callback({ success: false, message: "Not found!" });
 
     // Limit total users to 3 (including creator)
-    if (room.users.length >= 3) return callback({ success: false, message: "Church full" });
+    if (room.users.length >= 3) return callback({ success: false, message: "Full!" });
 
     room.users.push({ id: socket.id, name });
     socket.join(code);
@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
     socket.emit("loadMessages", last50);
 
     // Notify room
-    io.to(code).emit("systemMessage", `${name} joined church ${code}`);
+    io.to(code).emit("systemMessage", `${name} joined ${code}`);
   });
 
   // SEND MESSAGE
