@@ -7,22 +7,24 @@ const io = require("socket.io")(http);
 app.use(express.static("."));
 app.use(bodyParser.json());
 
-/* =========================
+/* ======================
    ADMIN SETTINGS
-========================= */
+====================== */
 
-const ADMIN_PASSWORD = "12345678";
+const ADMIN_PASSWORD = "ChangeThisPassword123";
+
 let maintenanceMode = false;
 let adminLoggedIn = false;
 
-/* =========================
-   MAINTENANCE CHECK
-========================= */
+/* ======================
+   MAINTENANCE MIDDLEWARE
+====================== */
 
 app.use((req, res, next) => {
 
   if (!maintenanceMode) return next();
 
+  // allow admin routes
   if (req.path.startsWith("/admin")) return next();
 
   res.send(`
@@ -50,11 +52,11 @@ app.use((req, res, next) => {
 
 });
 
-/* =========================
+/* ======================
    ADMIN LOGIN PAGE
-========================= */
+====================== */
 
-app.get("/admin", (req, res) => {
+app.get("/admin",(req,res)=>{
 
 res.send(`
 
@@ -144,11 +146,11 @@ alert("Wrong password")
 
 });
 
-/* =========================
+/* ======================
    ADMIN LOGIN CHECK
-========================= */
+====================== */
 
-app.post("/admin/login", (req,res)=>{
+app.post("/admin/login",(req,res)=>{
 
 const {password} = req.body;
 
@@ -161,9 +163,9 @@ res.json({success:false});
 
 });
 
-/* =========================
+/* ======================
    ADMIN PANEL
-========================= */
+====================== */
 
 app.get("/admin/panel",(req,res)=>{
 
@@ -226,7 +228,10 @@ margin-top:15px;
 function toggle(){
 
 fetch("/admin/toggle")
-.then(()=>location.reload())
+.then(r=>r.json())
+.then(data=>{
+location.reload();
+})
 
 }
 
@@ -239,9 +244,9 @@ fetch("/admin/toggle")
 
 });
 
-/* =========================
+/* ======================
    TOGGLE MAINTENANCE
-========================= */
+====================== */
 
 app.get("/admin/toggle",(req,res)=>{
 
@@ -251,13 +256,13 @@ return res.send("Unauthorized");
 
 maintenanceMode = !maintenanceMode;
 
-res.send("toggled");
+res.json({status: maintenanceMode});
 
 });
 
-/* =========================
-   CHAT SERVER
-========================= */
+/* ======================
+   CHAT ROOMS
+====================== */
 
 const rooms = {};
 
@@ -272,6 +277,10 @@ code = Math.floor(100000 + Math.random()*900000).toString();
 return code;
 
 }
+
+/* ======================
+   SOCKET.IO
+====================== */
 
 io.on("connection", (socket) => {
 
@@ -354,9 +363,9 @@ delete rooms[currentRoom];
 
 });
 
-/* =========================
+/* ======================
    START SERVER
-========================= */
+====================== */
 
 const PORT = process.env.PORT || 3000;
 
