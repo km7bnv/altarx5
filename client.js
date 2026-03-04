@@ -1,13 +1,44 @@
-const socket = io();
+const socket = io({
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
+  timeout: 20000
+});
 
 let roomCode = '';
 let userName = '';
 
-// ---------------------------
-// CREATE ROOM
+/* =========================
+   SOCKET CONNECTION EVENTS
+========================= */
+
+socket.on("connect", () => {
+  console.log("Connected:", socket.id);
+
+  // Auto rejoin room after reconnect
+  if (roomCode && userName) {
+    socket.emit("joinRoom", { code: roomCode, name: userName }, (res) => {
+      if (res.success) {
+        console.log("Rejoined room successfully");
+      } else {
+        console.log("Rejoin failed:", res.message);
+      }
+    });
+  }
+});
+
+socket.on("disconnect", () => {
+  console.log("Disconnected from server");
+});
+
+/* =========================
+   CREATE ROOM
+========================= */
+
 document.getElementById('createBtn').onclick = () => {
   const name = document.getElementById('name').value.trim();
   if (!name) return alert("Please enter your name before creating a room.");
+
   userName = name;
 
   socket.emit('createRoom', name, (code) => {
@@ -17,13 +48,15 @@ document.getElementById('createBtn').onclick = () => {
   });
 };
 
-// ---------------------------
-// JOIN ROOM
+/* =========================
+   JOIN ROOM
+========================= */
+
 document.getElementById('joinBtn').onclick = () => {
   const name = document.getElementById('name').value.trim();
   const code = document.getElementById('code').value.trim();
 
-  if (!name) return alert("Please enter your name to join a room.");
+  if (!name) return alert("Please enter your name.");
   if (!code) return alert("Please enter a room code.");
 
   userName = name;
@@ -35,77 +68,93 @@ document.getElementById('joinBtn').onclick = () => {
     } else if (res.message === "Church full") {
       alert("This church already has 3 people. You cannot join.");
     } else if (res.message === "Church not found!") {
-      alert("Room not found! Check the code and try again.");
+      alert("Room not found. Check the code.");
     } else {
       alert(res.message);
     }
   });
 };
 
-// ---------------------------
-// SEND MESSAGE
-document.getElementById('sendBtn').onclick = () => {
-  const msg = document.getElementById('message').value.trim();
-  if (!msg) return;
-  socket.emit('sendMessage', { code: roomCode, name: userName, message: msg });
-  document.getElementById('message').value = '';
-};
+/* =========================
+   SEND MESSAGE
+========================= */
 
-// ---------------------------
-// ENTER KEY SUPPORT
+document.getElementById('sendBtn').onclick = sendMessage;
+
 document.getElementById('message').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     e.preventDefault();
-    document.getElementById('sendBtn').click();
+    sendMessage();
   }
 });
 
-// ---------------------------
-// LOAD PAST MESSAGES
+function sendMessage() {
+  const msgInput = document.getElementById('message');
+  const msg = msgInput.value.trim();
+  if (!msg) return;
+
+  socket.emit('sendMessage', {
+    code: roomCode,
+    name: userName,
+    message: msg
+  });
+
+  msgInput.value = '';
+}
+
+/* =========================
+   RECEIVE MESSAGES
+========================= */
+
 socket.on('loadMessages', (messages) => {
   const chat = document.getElementById('chat');
   chat.innerHTML = '';
   messages.forEach(msg => addMessageToScreen(msg));
 });
 
-// ---------------------------
-// NEW MESSAGE
-socket.on('newMessage', (msg) => addMessageToScreen(msg));
+socket.on('newMessage', (msg) => {
+  addMessageToScreen(msg);
+});
 
-// ---------------------------
-// SYSTEM MESSAGE
 socket.on('systemMessage', (text) => {
   const chat = document.getElementById('chat');
   const sysDiv = document.createElement('div');
   sysDiv.classList.add('system-message');
-  sysDiv.textContent = text.trim();
+  sysDiv.textContent = text;
   chat.appendChild(sysDiv);
   chat.scrollTop = chat.scrollHeight;
 });
 
-// ---------------------------
-// ADD MESSAGE TO SCREEN
+/* =========================
+   MESSAGE RENDERING
+========================= */
+
 function addMessageToScreen(msg) {
   const chat = document.getElementById('chat');
 
   const msgDiv = document.createElement('div');
   msgDiv.classList.add('message');
-  if (msg.name === userName) msgDiv.classList.add('self');
 
-  const textSpan = document.createElement('span');
-  textSpan.textContent = `${msg.name} [${msg.time}]: ${msg.message.trim()}`;
-  msgDiv.appendChild(textSpan);
+  if (msg.name === userName) {
+    msgDiv.classList.add('self');
+  }
+
+  msgDiv.textContent = `${msg.name} [${msg.time}]: ${msg.message}`;
 
   chat.appendChild(msgDiv);
 
   // Keep only last 50 messages
-  while (chat.children.length > 50) chat.removeChild(chat.firstChild);
+  while (chat.children.length > 50) {
+    chat.removeChild(chat.firstChild);
+  }
 
   chat.scrollTop = chat.scrollHeight;
 }
 
-// ---------------------------
-// SHOW CHAT SCREEN
+/* =========================
+   SCREEN SWITCHING
+========================= */
+
 function showChat(code) {
   document.getElementById('joinScreen').style.display = 'none';
   document.getElementById('chatScreen').style.display = 'flex';
