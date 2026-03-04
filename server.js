@@ -11,8 +11,8 @@ app.use(bodyParser.json());
    ADMIN SETTINGS
 ====================== */
 
-const ADMIN_PASSWORD = "ChangeThisPassword123";
-
+const ADMIN_PASSWORD = "12345678";
+geThisPassword123
 let maintenanceMode = false;
 let adminLoggedIn = false;
 
