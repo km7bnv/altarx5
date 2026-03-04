@@ -1,162 +1,150 @@
-/* =========================
-   GLOBAL RESET
-========================= */
+:root {
+  --bg-color: #0f172a;
+  --panel-color: #1e293b;
+  --accent-color: #6366f1;
+  --self-color: #22c55e;
+  --text-color: #f1f5f9;
+  --muted-text: #94a3b8;
+  --border-color: #334155;
+}
 
-* {
-  box-sizing: border-box;
+html, body {
   margin: 0;
   padding: 0;
+  height: 100%;
   font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
-body {
-  background: #0f172a;
-  color: white;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* =========================
-   SCREEN CONTAINERS
-========================= */
-
-#joinScreen,
-#chatScreen {
-  width: 100%;
-  max-width: 600px;
-  height: 90vh;
-  background: #1e293b;
-  border-radius: 18px;
-  padding: 25px;
+#joinScreen {
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 #chatScreen {
   display: none;
+  height: 100vh;
+  width: 100vw;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
 }
 
-/* =========================
-   JOIN SCREEN
-========================= */
-
-#joinScreen input {
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  background: #0f172a;
-  color: white;
+#chatUI {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 90%;
+  max-width: 800px;
+  background-color: var(--panel-color);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  overflow: hidden;
+  padding: 10px;
 }
-
-#joinScreen button {
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: white;
-  transition: 0.2s ease;
-}
-
-#joinScreen button:hover {
-  opacity: 0.9;
-}
-
-/* =========================
-   CHAT AREA
-========================= */
 
 #chat {
   flex: 1;
   overflow-y: auto;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* prevents stretch bug */
-  padding-right: 6px;
-  margin-bottom: 10px;
 }
 
-/* =========================
-   MESSAGE BUBBLES
-========================= */
-
+/* 🔥 FIXED MESSAGE SIZING */
 .message {
   display: inline-block;
-  width: fit-content;      /* FIXES TRAIL SPACE */
-  max-width: 75%;
+  max-width: 70%;
   padding: 10px 14px;
-  margin: 6px 0;
-  border-radius: 14px;
-  word-wrap: break-word;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: var(--accent-color);
+  color: white;
+  word-break: break-word;          /* better than word-wrap */
   white-space: pre-wrap;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  line-height: 1.3;
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+  align-self: flex-start;
 }
 
 .message.self {
+  background-color: var(--self-color);
   align-self: flex-end;
-  background: linear-gradient(135deg, #22c55e, #16a34a);
 }
 
 .system-message {
-  font-size: 12px;
-  opacity: 0.6;
-  margin: 6px 0;
-  align-self: center;
+  text-align: center;
+  color: var(--muted-text);
+  font-style: italic;
+  margin: 5px 0;
 }
 
-/* =========================
-   CHAT INPUT AREA
-========================= */
-
-#message {
+input#message {
+  width: 100%;
   padding: 12px;
+  margin: 10px 0;
   border-radius: 8px;
-  border: none;
+  border: 1px solid var(--border-color);
   outline: none;
-  background: #0f172a;
-  color: white;
+  background-color: var(--panel-color);
+  color: var(--text-color);
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
-#sendBtn {
-  margin-top: 10px;
+input#message:focus {
+  border-color: var(--accent-color);
+}
+
+button#sendBtn {
   padding: 12px;
-  border-radius: 8px;
+  margin: 0 0 10px 0;
   border: none;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 8px;
+  background-color: var(--accent-color);
   color: white;
   cursor: pointer;
-  transition: 0.2s ease;
+  font-size: 16px;
 }
 
-#sendBtn:hover {
+button#sendBtn:hover {
+  background-color: #4f46e5;
+}
+
+input, button {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--panel-color);
+  color: var(--text-color);
+  outline: none;
+  font-size: 16px;
+}
+
+button:hover {
   opacity: 0.9;
 }
 
-/* =========================
-   ROOM CODE TEXT
-========================= */
-
-#roomCodeDisplay {
-  margin-top: 10px;
-  font-size: 14px;
-  opacity: 0.7;
+a {
+  color: var(--accent-color);
+  text-decoration: none;
 }
 
-/* =========================
-   SCROLLBAR (optional polish)
-========================= */
-
-#chat::-webkit-scrollbar {
-  width: 6px;
+a:hover {
+  text-decoration: underline;
 }
 
-#chat::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 4px;
+@media (max-width: 600px) {
+  #chatUI {
+    width: 95%;
+  }
+
+  input#message, input, button {
+    width: 100%;
+  }
 }
