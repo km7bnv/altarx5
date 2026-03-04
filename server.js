@@ -10,7 +10,7 @@ const rooms = {}; // In-memory rooms
 function generateRoomCode() {
   let code;
   do {
-    code = Math.floor(100000 + Math.random() * 900000).toString();
+    code = Math.floor(000001 + Math.random() * 999999).toString();
   } while (rooms[code]);
   return code;
 }
