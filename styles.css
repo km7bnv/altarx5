@@ -19,7 +19,7 @@ body {
 }
 
 /* =========================
-   SCREENS
+   SCREEN CONTAINERS
 ========================= */
 
 #joinScreen,
@@ -28,14 +28,44 @@ body {
   max-width: 600px;
   height: 90vh;
   background: #1e293b;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 18px;
+  padding: 25px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
 }
 
 #chatScreen {
   display: none;
+}
+
+/* =========================
+   JOIN SCREEN
+========================= */
+
+#joinScreen input {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: #0f172a;
+  color: white;
+}
+
+#joinScreen button {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  transition: 0.2s ease;
+}
+
+#joinScreen button:hover {
+  opacity: 0.9;
 }
 
 /* =========================
@@ -47,8 +77,9 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* IMPORTANT: prevents stretch */
-  padding-right: 5px;
+  align-items: flex-start; /* prevents stretch bug */
+  padding-right: 6px;
+  margin-bottom: 10px;
 }
 
 /* =========================
@@ -57,7 +88,7 @@ body {
 
 .message {
   display: inline-block;
-  width: fit-content;       /* KEY FIX */
+  width: fit-content;      /* FIXES TRAIL SPACE */
   max-width: 75%;
   padding: 10px 14px;
   margin: 6px 0;
@@ -67,26 +98,23 @@ body {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
 }
 
-/* Your messages (right side) */
 .message.self {
   align-self: flex-end;
   background: linear-gradient(135deg, #22c55e, #16a34a);
 }
 
-/* System messages */
 .system-message {
   font-size: 12px;
   opacity: 0.6;
-  margin: 4px 0;
+  margin: 6px 0;
   align-self: center;
 }
 
 /* =========================
-   INPUT AREA
+   CHAT INPUT AREA
 ========================= */
 
 #message {
-  margin-top: 10px;
   padding: 12px;
   border-radius: 8px;
   border: none;
@@ -111,31 +139,17 @@ body {
 }
 
 /* =========================
-   JOIN SCREEN INPUTS
+   ROOM CODE TEXT
 ========================= */
 
-input {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  margin: 6px 0;
-  outline: none;
-}
-
-button {
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  margin: 6px 0;
-}
-
-button:hover {
-  opacity: 0.9;
+#roomCodeDisplay {
+  margin-top: 10px;
+  font-size: 14px;
+  opacity: 0.7;
 }
 
 /* =========================
-   SCROLLBAR (optional nice look)
+   SCROLLBAR (optional polish)
 ========================= */
 
 #chat::-webkit-scrollbar {
@@ -144,5 +158,5 @@ button:hover {
 
 #chat::-webkit-scrollbar-thumb {
   background: #475569;
-  border-radius: 3px;
+  border-radius: 4px;
 }
