@@ -30,7 +30,7 @@ app.use((req, res, next) => {
   res.send(`
   <html>
   <head>
-  <title>Maintenance</title>
+  <title>Under Maintanence</title>
   <style>
   body{
   background:#0f172a;
