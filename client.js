@@ -65,9 +65,9 @@ document.getElementById('joinBtn').onclick = () => {
     if (res.success) {
       roomCode = code;
       showChat(code);
-    } else if (res.message === "Church full") {
-      alert("This church already has 3 people. You cannot join.");
-    } else if (res.message === "Church not found!") {
+    } else if (res.message === "Room full") {
+      alert("This Room already has 3 people. You cannot join.");
+    } else if (res.message === "Room not found!") {
       alert("Room not found. Check the code.");
     } else {
       alert(res.message);
