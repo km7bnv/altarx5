@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
     const last50 = room.messages.slice(-50);
     socket.emit("loadMessages", last50);
 
-    io.to(code).emit("systemMessage", name + " joined" + code);
+    io.to(code).emit("systemMessage", name + " joined " + code);
   });
 
   socket.on("sendMessage", ({ code, name, message }) => {
