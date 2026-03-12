@@ -19,7 +19,7 @@ const rooms = {};
 function generateRoomCode() {
   let code;
   do {
-    code = Math.floor(0o1 + Math.random() * 999999).toString();
+    code = Math.floor(000001 + Math.random() * 999999).toString();
   } while (rooms[code]);
   return code;
 }
